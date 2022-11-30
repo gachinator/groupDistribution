@@ -15,23 +15,27 @@ json = {1 : {"name" : "rak", "turn1" : "math", "turn2" : "bio", "turn3" : "CS"},
 # student_lessons = {name : count, name : count, ...}
 
 groups_sizes = {
-				 "math" : 20,
-			     "bio" : 30,
-			     "music" : 20
+				 "math" : [20,3],
+			     "bio" : [1,3],
+			     "music" : [20,3],
+			     "CS" : [2,3],
+			     "art" : [3,2]
 			    				}
 
+# Создание групп
 def groups_init(subjects):
 	groups = {}
 	[groups.update({i : []}) for i in subjects]
 	return(groups)
 
+# Создание списка предметов
 def subjects_list_init(jsonobj):
 	subjects = set()
 	for i in jsonobj:
 		[subjects.add((jsonobj[i]["turn"+str(j)])) for j in range(1,4)]
 	return(subjects)
 
-
+# Создание счетчика предметов у каждого ученика
 def count_of_lessons_list_create(jsonobj):
 	student_lessons = {}
 	for i in jsonobj:
@@ -40,6 +44,20 @@ def count_of_lessons_list_create(jsonobj):
 	
 	return(student_lessons)
 
+# Создание счетчика групп по предмету
+def groups_number_init(jsonobj):
+	groups_number = dict()
+	for i in jsonobj:
+		if jsonobj[i]["turn1"] not in groups_number:
+			groups_number.update({jsonobj[i]["turn1"] : 1})
+		if jsonobj[i]["turn2"] not in groups_number:
+			groups_number.update({jsonobj[i]["turn2"] : 1})
+		if jsonobj[i]["turn3"] not in groups_number:
+			groups_number.update({jsonobj[i]["turn3"] : 1})
+
+	return(groups_number)
+
+# Заполнение групп учениками и счетчика предметов у каждого ученика
 def groups_filling(jsonobj, groups, subjects, student_lessons):
 	for i in jsonobj:
 		if jsonobj[i]["turn1"] in subjects:
@@ -52,11 +70,42 @@ def groups_filling(jsonobj, groups, subjects, student_lessons):
 	
 	return(groups)
 
-def group_size_check(groups):
+# Проверка размерности групп - создание новых групп
+def group_size_check(groups, groups_sizes, groups_number):
+	for subject in list(groups):
+		temp = []
+		while len(groups[subject]) > groups_sizes[subject][0]:
+			temp.append(groups[subject][-1])
+			groups[subject].pop(-1)
+		ex = {}
+		if len(temp) % groups_sizes[subject][0] != 0:
+			for i in range(len(temp) // groups_sizes[subject][0] + 1):
+				ex.update({i : []})
+				for student in range(groups_sizes[subject][0]):
+					ex[i].append(temp[-1])
+					temp.pop(-1)
+		else:
+			for i in range(len(temp) // groups_sizes[subject][0]):
+				ex.update({i : []})
+				for student in range(groups_sizes[subject][0]):
+					ex[i].append(temp[-1])
+					temp.pop(-1)
+		for i in ex:
+			groups_number[subject] += 1
+			groups.update({"subj" : ex[i]})
+			groups[subject+str(i+2)] = groups.pop("subj")
+	return(groups)
+
+def group_count_check(groups, groups_number):
 	pass
+
 
 student_lessons = count_of_lessons_list_create(json)
 subjects = subjects_list_init(json)
 groups = groups_init(subjects)
+groups_number = groups_number_init(json)
 
 print(student_lessons,"\n",groups_filling(json, groups, subjects, student_lessons))
+print(groups_number)
+print(group_size_check(groups, groups_sizes, groups_number))
+print(groups_number)
