@@ -1,5 +1,6 @@
 print('Hello, world!')
 
+math = input('Колличество учеников в группе: ')
 #trying
 
 import json
@@ -14,13 +15,22 @@ json = {1 : {"name" : "rak", "turn1" : "math", "turn2" : "bio", "turn3" : "CS"},
 # groups = {subject1 : [name, name, ...], subject2 : [name, name, ...], ...}
 # student_lessons = {name : count, name : count, ...}
 
-groups_sizes = {
-				 "math" : [20,3],
-			     "bio" : [1,3],
-			     "music" : [20,3],
-			     "CS" : [2,3],
-			     "art" : [3,2]
-			    				}
+# Создание лимита размерности группы
+def groups_sizes(): 
+    countofstudents_math = input('Введите количество учеников в группе математики: ')
+    countofgroups_math = input('Введите количество групп математики: ')
+
+    countofstudents_bio = input('Введите количество учеников в группе биологии: ')
+    countofgroups_bio = input('Введите количество групп биологии: ')
+    
+    countofstudents_music = input('Введите количество учеников в группе музыки: ')
+    countofgroups_music = input('Введите количество групп музыки: ')
+    
+    countofstudents_CS = input('Введите количество учеников в группе Computer Science: ')
+    countofgroups_CS = input('Введите количество групп Computer Science: ')
+    
+    countofstudents_art = input('Введите количество учеников в группе изобразительного искусства: ')
+    countofgroups_art = input('Введите количество групп изобразительного искусства: ')
 
 # Создание групп
 def groups_init(subjects):
